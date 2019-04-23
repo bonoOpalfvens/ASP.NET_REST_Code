@@ -37,9 +37,9 @@
                     }
                     ));
                     c.OperationProcessors.Add(new OperationSecurityScopeProcessor("JWT Token"));
-
                 }
             );
+            services.AddCors(options => options.AddPolicy("AllowAllOrigins", builder => builder.AllowAnyOrigin()));
             services.AddDbContext<CodeContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("CodeContext"))
             );
@@ -64,6 +64,7 @@
             app.UseMvc();
             app.UseSwaggerUi3();
             app.UseSwagger();
+            app.UseCors("AllowAllOrigins");
 
             codeDataInitializer.InitializeData();
         }
