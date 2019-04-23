@@ -58,15 +58,15 @@
             {
                 app.UseHsts();
             }
+            app.UseCors("AllowAllOrigins");
 
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseMvc();
             app.UseSwaggerUi3();
             app.UseSwagger();
-            app.UseCors("AllowAllOrigins");
 
-            codeDataInitializer.InitializeData();
+            //codeDataInitializer.InitializeData();
         }
     }
 }
