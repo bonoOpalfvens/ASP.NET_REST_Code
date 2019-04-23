@@ -3,10 +3,14 @@
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using NSwag;
     using NSwag.SwaggerGeneration.Processors.Security;
+    using REST_Code.Data;
+    using REST_Code.Data.Repository;
+    using REST_Code.Models.IRepository;
 
     public class Startup
     {
@@ -36,8 +40,15 @@
 
                 }
             );
+            services.AddDbContext<CodeContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("CodeContext"))
+            );
+
+            services.AddScoped<CodeDataInitializer>();
+            services.AddScoped<IBoardRepository, BoardRepository>();
+            services.AddScoped<IPostRepository, PostRepository>();
         }
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, CodeDataInitializer codeDataInitializer)
         {
             if (env.IsDevelopment())
             {
@@ -53,6 +64,8 @@
             app.UseMvc();
             app.UseSwaggerUi3();
             app.UseSwagger();
+
+            codeDataInitializer.InitializeData();
         }
     }
 }
