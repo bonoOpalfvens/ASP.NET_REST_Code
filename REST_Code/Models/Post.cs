@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace REST_Code.Models
 {
@@ -13,7 +14,9 @@ namespace REST_Code.Models
         public Board Board { get; set; }
         public String User { get; set; }
         public DateTime DateAdded { get; set; }
+        [NotMapped]
         public ICollection<String> Comments { get; set; }
+        [NotMapped]
         public ICollection<String> Likes { get; set; }
         #endregion
 

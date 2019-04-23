@@ -1,4 +1,8 @@
-﻿namespace REST_Code.Data
+﻿using System;
+using System.Collections;
+using REST_Code.Models;
+
+namespace REST_Code.Data
 {
     public class CodeDataInitializer
     {
@@ -14,7 +18,7 @@
             _dbContext.Database.EnsureDeleted();
             if (_dbContext.Database.EnsureCreated())
             {
-                // Seed db, see DBContext
+                
             }
         }
     }
