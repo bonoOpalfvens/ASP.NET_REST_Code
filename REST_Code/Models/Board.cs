@@ -22,9 +22,5 @@ namespace REST_Code.Models
             Posts = new List<Post>();
         }
         #endregion
-
-        #region Methods
-        public Post GetPost(long id) => Posts.SingleOrDefault(i => i.Id == id);
-        #endregion
     }
 }
