@@ -14,4 +14,8 @@
     <PackageReference Include="NSwag.AspNetCore" Version="12.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Resources\Images\" />
+  </ItemGroup>
+
 </Project>
