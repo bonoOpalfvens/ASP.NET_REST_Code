@@ -31,5 +31,20 @@ namespace REST_Code.Controllers
         {
             return _postRepository.GetAll().OrderBy(p => p.DateAdded);
         }
+
+        // GET : api/post/id
+        /// <summary>
+        /// Get the post with the given id
+        /// </summary>
+        /// <param name="id">the id of the post</param>
+        /// <returns>the post</returns>
+        [HttpGet("{id}")]
+        public ActionResult<Post> GetPost(long id)
+        {
+            Post post = _postRepository.GetBy(id);
+            if (post == null)
+                return NotFound();
+            return post;
+        }
     }
 }
