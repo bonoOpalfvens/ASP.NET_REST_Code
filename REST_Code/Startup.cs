@@ -111,7 +111,7 @@
             app.UseSwaggerUi3();
             app.UseSwagger();
 
-            codeDataInitializer.InitializeData();
+            codeDataInitializer.InitializeDataAsync().Wait();
         }
     }
 }

@@ -29,12 +29,12 @@ namespace REST_Code.Data.Repository
 
         public IEnumerable<Post> GetAll()
         {
-            return _posts.ToList();
+            return _posts.Include(p => p.Board).ToList();
         }
 
         public Post GetBy(long id)
         {
-            return _posts.SingleOrDefault(p => p.Id == id);
+            return _posts.Include(p => p.Board).SingleOrDefault(p => p.Id == id);
         }
 
         public void SaveChanges()
@@ -44,7 +44,7 @@ namespace REST_Code.Data.Repository
 
         public bool TryGetPost(long id, out Post post)
         {
-            post = _posts.FirstOrDefault(p => p.Id == id);
+            post = _posts.Include(p => p.Board).FirstOrDefault(p => p.Id == id);
             return post != null;
         }
 

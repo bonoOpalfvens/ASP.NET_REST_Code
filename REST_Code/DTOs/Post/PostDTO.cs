@@ -1,40 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace REST_Code.Models
+namespace REST_Code.DTOs
 {
-    public class Post
+    public class PostDTO
     {
-        #region Properties
+        [Required]
         public long Id { get; set; }
         [Required]
         [MaxLength(50)]
         public String Title { get; set; }
         [Required]
-        public Board Board { get; set; }
+        public long BoardId { get; set; }
+        [Required]
+        [Url]
+        public String BoardIcon { get; set; }
+        [Required]
+        public String BoardName { get; set; }
         [Required]
         [MaxLength(20)]
         public String User { get; set; }
         [Required]
         public DateTime DateAdded { get; set; }
-        [NotMapped]
+        [Required]
         public ICollection<String> Comments { get; set; }
-        [NotMapped]
+        [Required]
         public ICollection<String> Likes { get; set; }
-        #endregion
-
-        #region Constructors
-        public Post()
-        {
-            DateAdded = DateTime.Now;
-            Comments = new List<String>();
-            Likes = new List<String>();
-        }
-        #endregion
-
-        #region Methods
-        #endregion
     }
 }

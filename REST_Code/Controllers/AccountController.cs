@@ -111,6 +111,34 @@ namespace REST_Code.Controllers
             return user;
         }
 
+        // GET : api/account/checkusername
+        /// <summary>
+        /// Get the availability of the given username
+        /// </summary>
+        /// <param name="username">the username</param>
+        /// <returns>the availability of the username</returns>
+        [AllowAnonymous]
+        [HttpGet("checkusername")]
+        public async Task<ActionResult<Boolean>> CheckAvailableUserNameAsync(String username)
+        {
+            var user = await _userManager.FindByNameAsync(username);
+            return user == null;
+        }
+
+        // GET : api/account/checkemail
+        /// <summary>
+        /// Get the availability of the given email
+        /// </summary>
+        /// <param name="email">the email</param>
+        /// <returns>the availability of the email</returns>
+        [AllowAnonymous]
+        [HttpGet("checkemail")]
+        public async Task<ActionResult<Boolean>> CheckAvailableEmailAsync(String email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            return user == null;
+        }
+
         // PUT : api/account
         /// <summary>
         /// Edit the user with the given id

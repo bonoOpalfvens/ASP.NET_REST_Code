@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using REST_Code.DTOs;
 using REST_Code.Models;
 using REST_Code.Models.IRepository;
 using System.Collections.Generic;
@@ -27,9 +28,11 @@ namespace REST_Code.Controllers
         /// </summary>
         /// <returns>the posts</returns>
         [HttpGet]
-        public IEnumerable<Post> GetPosts()
+        public IEnumerable<PostDTO> GetPosts()
         {
-            return _postRepository.GetAll().OrderBy(p => p.DateAdded);
+            IEnumerable<PostDTO> posts = _postRepository.GetAll().OrderBy(p => p.DateAdded).Select(post => new PostDTO { Id = post.Board.Id, Title = post.Title, BoardId = post.Board.Id, BoardIcon = post.Board.Icon, BoardName = post.Board.Name, User = post.User, DateAdded = post.DateAdded, Comments = post.Comments, Likes = post.Likes });
+
+            return posts;
         }
 
         // GET : api/post/id
@@ -39,12 +42,12 @@ namespace REST_Code.Controllers
         /// <param name="id">the id of the post</param>
         /// <returns>the post</returns>
         [HttpGet("{id}")]
-        public ActionResult<Post> GetPost(long id)
+        public ActionResult<PostDTO> GetPost(long id)
         {
             Post post = _postRepository.GetBy(id);
             if (post == null)
                 return NotFound();
-            return post;
+            return new PostDTO { Id = post.Board.Id, Title = post.Title, BoardId = post.Board.Id, BoardIcon = post.Board.Icon, BoardName = post.Board.Name, User = post.User, DateAdded = post.DateAdded, Comments = post.Comments, Likes = post.Likes };
         }
     }
 }

@@ -9,8 +9,11 @@ namespace REST_Code.Models
         #region Properties
         public long Id { get; set; }
         [Required]
+        [MaxLength(50)]
         public String Name { get; set; }
         [Required]
+        [Url]
+        [MaxLength(200)]
         public String Icon { get; set; }
         public ICollection<Post> Posts { get; set; }
         #endregion
