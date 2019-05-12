@@ -17,6 +17,14 @@ namespace REST_Code.Data.Repository
             _posts = dbContext.Posts;
         }
 
+        private IQueryable<Post> Posts => _posts
+            .Include(p => p.Board).ThenInclude(b => b.Icon)
+            .Include(p => p.User).ThenInclude(p => p.Avatar)
+            .Include(p => p.Comments).ThenInclude(c => c.User).ThenInclude(u => u.Avatar)
+            .Include(p => p.Comments).ThenInclude(c => c.Likes)
+            .Include(p => p.Likes);
+
+
         public void Add(Post post)
         {
             _posts.Add(post);
@@ -29,12 +37,12 @@ namespace REST_Code.Data.Repository
 
         public IEnumerable<Post> GetAll()
         {
-            return _posts.Include(p => p.Board).ToList();
+            return Posts.ToList();
         }
 
         public Post GetBy(long id)
         {
-            return _posts.Include(p => p.Board).SingleOrDefault(p => p.Id == id);
+            return Posts.SingleOrDefault(p => p.Id == id);
         }
 
         public void SaveChanges()
@@ -44,7 +52,7 @@ namespace REST_Code.Data.Repository
 
         public bool TryGetPost(long id, out Post post)
         {
-            post = _posts.Include(p => p.Board).FirstOrDefault(p => p.Id == id);
+            post = Posts.FirstOrDefault(p => p.Id == id);
             return post != null;
         }
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using REST_Code.DTOs.Models;
 using REST_Code.Models;
 using REST_Code.Models.IRepository;
 using System.Collections.Generic;
@@ -27,9 +28,9 @@ namespace REST_Code.Controllers
         /// </summary>
         /// <returns>the boards</returns>
         [HttpGet]
-        public IEnumerable<Board> GetBoards()
+        public IEnumerable<BoardDTO> GetBoards()
         {
-            return _boardRepository.GetAll().OrderBy(b => b.Name);
+            return _boardRepository.GetAll().OrderBy(b => b.Name).Select(BoardDTO.FromBoard);
         }
 
         // GET : api/board/id
@@ -39,12 +40,12 @@ namespace REST_Code.Controllers
         /// <param name="id">the id of the board</param>
         /// <returns>the board</returns>
         [HttpGet("{id}")]
-        public ActionResult<Board> GetBoard(long id)
+        public ActionResult<BoardDTO> GetBoard(long id)
         {
             Board board = _boardRepository.GetBy(id);
             if (board == null)
                 return NotFound();
-            return board;
+            return BoardDTO.FromBoard(board);
         }
     }
 }

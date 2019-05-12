@@ -3,16 +3,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.IdentityModel.Tokens;
 using REST_Code.DTOs;
-using REST_Code.DTOs.User;
+using REST_Code.DTOs.Models;
 using REST_Code.Models;
 using REST_Code.Models.IRepository;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
-using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -146,7 +144,7 @@ namespace REST_Code.Controllers
         /// <param name="model">the user with the changed properties</param>
         /// <returns>Status 204</returns>
         [HttpPut]
-        public ActionResult<User> Edit(EditDTO model)
+        public ActionResult<User> Edit(UserDTO model)
         {
             User user;
             if (!_userRepository.TryGetUser(model.Id, out user))
@@ -165,55 +163,6 @@ namespace REST_Code.Controllers
 
             _userRepository.SaveChanges();
             return user;
-        }
-
-        // POST : api/account/id/avatar
-        /// <summary>
-        /// Upload a new avatar for the user
-        /// </summary>
-        /// <param name="id">the id of the user</param>
-        /// <returns>Status 204</returns>
-        [HttpPost("{id}/avatar")]
-        public IActionResult SaveAvatar(long id)
-        {
-            try
-            {
-                User user;
-                if (!_userRepository.TryGetUser(id, out user))
-                    return NotFound();
-
-                if (!User.Identity.Name.Equals(user.Username))
-                    return BadRequest();
-
-                var file = Request.Form.Files[0];
-                var folderName = Path.Combine("Resources", "Images");
-                var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
-
-                if (file.Length > 0)
-                {
-                    var fileName = user.Username + DateTime.Now.ToString("yymmssfff") + Path.GetExtension(file.FileName);
-                    var fullPath = Path.Combine(pathToSave, fileName);
-                    var dbPath = Path.Combine(folderName, fileName);
-
-                    using (var stream = new FileStream(fullPath, FileMode.Create))
-                    {
-                        file.CopyTo(stream);
-                    }
-
-                    user.Avatar = dbPath;
-                    _userRepository.SaveChanges();
-
-                    return Ok(new { dbPath });
-                }
-                else
-                {
-                    return BadRequest();
-                }
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Internal server error");
-            }
         }
 
         private string GetToken(IdentityUser user)

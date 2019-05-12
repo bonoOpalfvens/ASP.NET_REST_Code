@@ -16,6 +16,11 @@ namespace REST_Code.Data.Repository
             _context = dbContext;
             _boards = dbContext.Boards;
         }
+        
+        private IQueryable<Board> Boards => _boards
+            .Include(b => b.Icon)
+            .Include(p => p.Posts)
+            .Include(p => p.Likes);
 
         public void Add(Board board)
         {
@@ -24,12 +29,12 @@ namespace REST_Code.Data.Repository
 
         public IEnumerable<Board> GetAll()
         {
-            return _boards.ToList();
+            return Boards.ToList();
         }
 
         public Board GetBy(long id)
         {
-            return _boards.Include(b => b.Posts).SingleOrDefault(b => b.Id == id);
+            return Boards.SingleOrDefault(b => b.Id == id);
         }
 
         public void SaveChanges()
@@ -39,7 +44,7 @@ namespace REST_Code.Data.Repository
 
         public bool TryGetBoard(long id, out Board board)
         {
-            board = _boards.Include(b => b.Posts).FirstOrDefault(b => b.Id == id);
+            board = Boards.FirstOrDefault(b => b.Id == id);
             return board != null;
         }
     }

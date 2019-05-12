@@ -2,34 +2,29 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace REST_Code.Models
 {
-    public class Post
+    public class Comment
     {
         #region Properties
         [Key]
         public long Id { get; set; }
         [Required]
-        [MaxLength(50)]
-        public String Title { get; set; }
-        [Required]
-        public Board Board { get; set; }
+        public Post Post { get; set; }
         [Required]
         public User User { get; set; }
         [Required]
         public DateTime DateAdded { get; set; }
-        public ICollection<Comment> Comments { get; set; }
-        public ICollection<PostLikes> Likes { get; set; }
+        [Required]
+        [MaxLength(250)]
+        public string Content { get; set; }
+        public ICollection<CommentLikes> Likes { get; set; }
         #endregion
 
         #region Constructors
-        public Post()
+        public Comment()
         {
-            DateAdded = DateTime.Now;
-            Comments = new List<Comment>();
-            Likes = new List<PostLikes>();
+            Likes = new List<CommentLikes>();
         }
         #endregion
     }
