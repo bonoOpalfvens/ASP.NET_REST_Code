@@ -9,7 +9,7 @@ namespace REST_Code.DTOs.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public string Icon { get; set; }
-        public ICollection<PostDTO> Posts { get; set; }
+        public IEnumerable<PostDTO> Posts { get; set; }
         public int Likes { get; set; }
         public bool IsLiking { get; set; }
 

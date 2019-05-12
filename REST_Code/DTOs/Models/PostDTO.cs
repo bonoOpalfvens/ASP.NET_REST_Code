@@ -29,5 +29,17 @@ namespace REST_Code.DTOs.Models
                 Likes = post.Likes.Count
             };
         }
+        public static PostDTO FromPostMin(Post post)
+        {
+            return new PostDTO
+            {
+                Id = post.Board.Id,
+                Title = post.Title,
+                DateAdded = post.DateAdded,
+                User = UserDTO.FromUser(post.User),
+                Comments = post.Comments.Select(CommentDTO.FromComment),
+                Likes = post.Likes.Count
+            };
+        }
     }
 }

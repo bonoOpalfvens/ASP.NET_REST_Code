@@ -2,6 +2,7 @@
 using REST_Code.DTOs.Models;
 using REST_Code.Models;
 using REST_Code.Models.IRepository;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -30,7 +31,14 @@ namespace REST_Code.Controllers
         [HttpGet]
         public IEnumerable<BoardDTO> GetBoards()
         {
-            return _boardRepository.GetAll().OrderBy(b => b.Name).Select(BoardDTO.FromBoard);
+            List<BoardDTO> boardDTOs = new List<BoardDTO>();
+            foreach (Board board in _boardRepository.GetAll().OrderBy(b => b.Name))
+            {
+                BoardDTO temp = BoardDTO.FromBoard(board);
+                temp.Posts = board.Posts.Select(PostDTO.FromPost);
+                boardDTOs.Add(temp);
+            }
+            return boardDTOs;
         }
 
         // GET : api/board/id
@@ -45,7 +53,9 @@ namespace REST_Code.Controllers
             Board board = _boardRepository.GetBy(id);
             if (board == null)
                 return NotFound();
-            return BoardDTO.FromBoard(board);
+            BoardDTO temp = BoardDTO.FromBoard(board);
+            temp.Posts = board.Posts.Select(PostDTO.FromPost);
+            return temp;
         }
     }
 }

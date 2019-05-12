@@ -19,7 +19,7 @@ namespace REST_Code.Data.Repository
         
         private IQueryable<Board> Boards => _boards
             .Include(b => b.Icon)
-            .Include(p => p.Posts)
+            .Include(p => p.Posts).ThenInclude(p => p.User)
             .Include(p => p.Likes);
 
         public void Add(Board board)
