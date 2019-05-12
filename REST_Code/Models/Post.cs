@@ -15,6 +15,9 @@ namespace REST_Code.Models
         [MaxLength(50)]
         public String Title { get; set; }
         [Required]
+        [MaxLength(10000)]
+        public String Content { get; set; }
+        [Required]
         public Board Board { get; set; }
         [Required]
         public User User { get; set; }

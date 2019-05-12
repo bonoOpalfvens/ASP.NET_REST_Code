@@ -3,6 +3,7 @@ using REST_Code.DTOs;
 using REST_Code.DTOs.Models;
 using REST_Code.Models;
 using REST_Code.Models.IRepository;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -31,7 +32,14 @@ namespace REST_Code.Controllers
         [HttpGet]
         public IEnumerable<PostDTO> GetPosts()
         {
-            return _postRepository.GetAll().OrderBy(p => p.DateAdded).Select(PostDTO.FromPost);
+            List<PostDTO> postDTOs = new List<PostDTO>();
+            foreach (Post post in _postRepository.GetAll().OrderByDescending(b => b.DateAdded))
+            {
+                PostDTO temp = PostDTO.FromPost(post);
+                temp.Board = new BoardDTO { Id = post.Board.Id, Description = post.Board.Description, Name = post.Board.Name, Icon = post.Board.Icon.Url, Likes = post.Likes.Count };
+                postDTOs.Add(temp);
+            }
+            return postDTOs;
         }
 
         // GET : api/post/id
@@ -46,7 +54,9 @@ namespace REST_Code.Controllers
             Post post = _postRepository.GetBy(id);
             if (post == null)
                 return NotFound();
-            return PostDTO.FromPost(post);
+            PostDTO temp = PostDTO.FromPost(post);
+            temp.Board = new BoardDTO { Id = post.Board.Id, Description = post.Board.Description, Name = post.Board.Name, Icon = post.Board.Icon.Url, Likes = post.Likes.Count };
+            return temp;
         }
     }
 }

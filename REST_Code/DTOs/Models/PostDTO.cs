@@ -9,6 +9,7 @@ namespace REST_Code.DTOs.Models
     {
         public long Id { get; set; }
         public string Title { get; set; }
+        public string Content { get; set; }
         public BoardDTO Board { get; set; }
         public UserDTO User { get; set; }
         public DateTime DateAdded { get; set; }
@@ -20,21 +21,9 @@ namespace REST_Code.DTOs.Models
         {
             return new PostDTO
             {
-                Id = post.Board.Id,
+                Id = post.Id,
                 Title = post.Title,
-                DateAdded = post.DateAdded,
-                Board = BoardDTO.FromBoard(post.Board),
-                User = UserDTO.FromUser(post.User),
-                Comments = post.Comments.Select(CommentDTO.FromComment),
-                Likes = post.Likes.Count
-            };
-        }
-        public static PostDTO FromPostMin(Post post)
-        {
-            return new PostDTO
-            {
-                Id = post.Board.Id,
-                Title = post.Title,
+                Content = post.Content,
                 DateAdded = post.DateAdded,
                 User = UserDTO.FromUser(post.User),
                 Comments = post.Comments.Select(CommentDTO.FromComment),
