@@ -16,6 +16,9 @@ namespace REST_Code.Data.Repository
             _context = dbContext;
             _users = dbContext.AppUsers;
         }
+
+        private IQueryable<User> Users => _users
+            .Include(p => p.Avatar);
         #endregion
 
         public void Add(User user)
@@ -25,7 +28,7 @@ namespace REST_Code.Data.Repository
 
         public User GetBy(string username)
         {
-            return _users.Include(u => u.CreatedPosts).Include(u => u.Boards).Include(u => u.LikedPosts).SingleOrDefault(u => u.Username.Equals(username));
+            return Users.Include(u => u.CreatedPosts).Include(u => u.Boards).Include(u => u.LikedPosts).SingleOrDefault(u => u.Username.Equals(username));
         }
 
         public void SaveChanges()
@@ -35,7 +38,7 @@ namespace REST_Code.Data.Repository
 
         public bool TryGetUser(long id, out User user)
         {
-            user = _users.Include(u => u.CreatedPosts).Include(u => u.Boards).Include(u => u.LikedPosts).FirstOrDefault(u => u.Id == id);
+            user = Users.Include(u => u.CreatedPosts).Include(u => u.Boards).Include(u => u.LikedPosts).FirstOrDefault(u => u.Id == id);
             return user != null;
         }
 

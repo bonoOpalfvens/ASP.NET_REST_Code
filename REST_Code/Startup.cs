@@ -83,7 +83,7 @@
                     options.User.RequireUniqueEmail = true;
                 }
             );
-            services.AddCors(options => options.AddPolicy("AllowAllOrigins", builder => builder.AllowAnyOrigin()));
+            services.AddCors(options => options.AddPolicy("AllowAllOrigins", builder => builder.AllowAnyOrigin().AllowAnyHeader()));
             services.AddDbContext<CodeContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("CodeContext"))
             );
@@ -92,6 +92,7 @@
             services.AddScoped<IBoardRepository, BoardRepository>();
             services.AddScoped<IPostRepository, PostRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IIconRepository, IconRepository>();
         }
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, CodeDataInitializer codeDataInitializer)
         {
@@ -104,6 +105,7 @@
                 app.UseHsts();
             }
             app.UseCors("AllowAllOrigins");
+            app.UseCors("AllowAllHeaders");
 
             app.UseHttpsRedirection();
             app.UseAuthentication();

@@ -20,6 +20,7 @@ namespace REST_Code.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
+    [Produces("application/json")]
     [ApiConventionType(typeof(DefaultApiConventions))]
     public class AccountController : Controller
     {
@@ -27,13 +28,15 @@ namespace REST_Code.Controllers
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IUserRepository _userRepository;
+        private readonly IIconRepository _iconRepository;
         private readonly IConfiguration _config;
 
-        public AccountController(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager, IUserRepository userRepository, IConfiguration conf)
+        public AccountController(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager, IUserRepository userRepository, IIconRepository iconRepository, IConfiguration conf)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _userRepository = userRepository;
+            _iconRepository = iconRepository;
             _config = conf;
         }
         #endregion
@@ -73,7 +76,7 @@ namespace REST_Code.Controllers
         {
             // Basic registration of required credentials
             IdentityUser idUser = new IdentityUser { UserName = model.UserName, Email = model.Email };
-            User user = new User { Email = model.Email, Username = model.UserName };
+            User user = new User { Email = model.Email, Username = model.UserName, Avatar =  _iconRepository.GetBy(14)};
             var result = await _userManager.CreateAsync(idUser, model.Password);
 
             if (result.Succeeded)
@@ -94,7 +97,7 @@ namespace REST_Code.Controllers
         /// <returns>the user</returns>
         [AllowAnonymous]
         [HttpGet("{username}")]
-        public ActionResult<User> GetUser(String username)
+        public ActionResult<UserDTO> GetUser(String username)
         {
             User user = _userRepository.GetBy(username);
             if (user == null)
@@ -106,7 +109,7 @@ namespace REST_Code.Controllers
                     user.Email = "privacy@fluxcode.be";
                 // Private attributes only readable for logged in users
             }
-            return user;
+            return UserDTO.FromUser(user);
         }
 
         // GET : api/account/checkusername
