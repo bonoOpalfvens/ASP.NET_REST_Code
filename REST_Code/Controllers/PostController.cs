@@ -56,6 +56,7 @@ namespace REST_Code.Controllers
                 return NotFound();
             PostDTO temp = PostDTO.FromPost(post);
             temp.Board = new BoardDTO { Id = post.Board.Id, Description = post.Board.Description, Name = post.Board.Name, Icon = post.Board.Icon.Url, Likes = post.Likes.Count };
+            temp.Comments = post.Comments.Select(CommentDTO.FromComment);
             return temp;
         }
     }

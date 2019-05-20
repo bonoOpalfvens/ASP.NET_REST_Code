@@ -14,6 +14,7 @@ namespace REST_Code.DTOs.Models
         public UserDTO User { get; set; }
         public DateTime DateAdded { get; set; }
         public IEnumerable<CommentDTO> Comments { get; set; }
+        public int noComments { get; set; }
         public int Likes { get; set; }
         public bool IsLiking { get; set; }
 
@@ -26,7 +27,7 @@ namespace REST_Code.DTOs.Models
                 Content = post.Content,
                 DateAdded = post.DateAdded,
                 User = UserDTO.FromUser(post.User),
-                Comments = post.Comments.Select(CommentDTO.FromComment),
+                noComments = post.Comments.Count,
                 Likes = post.Likes.Count
             };
         }

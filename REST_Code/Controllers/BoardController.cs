@@ -23,6 +23,17 @@ namespace REST_Code.Controllers
         }
         #endregion
 
+        // GET : api/board/top
+        /// <summary>
+        /// Get top 10 boards
+        /// </summary>
+        /// <returns>the top 10 boards</returns>
+        [HttpGet("top")]
+        public IEnumerable<BoardDTO> GetTopBoards()
+        {
+            return _boardRepository.GetAll().OrderBy(b => b.Posts.Count).Take(10).Select(BoardDTO.FromBoard);
+        }
+
         // GET : api/board
         /// <summary>
         /// Get all the boards
@@ -31,14 +42,7 @@ namespace REST_Code.Controllers
         [HttpGet]
         public IEnumerable<BoardDTO> GetBoards()
         {
-            List<BoardDTO> boardDTOs = new List<BoardDTO>();
-            foreach (Board board in _boardRepository.GetAll().OrderBy(b => b.Name))
-            {
-                BoardDTO temp = BoardDTO.FromBoard(board);
-                temp.Posts = board.Posts.Select(PostDTO.FromPost);
-                boardDTOs.Add(temp);
-            }
-            return boardDTOs;
+            return _boardRepository.GetAll().Select(BoardDTO.FromBoard);
         }
 
         // GET : api/board/id

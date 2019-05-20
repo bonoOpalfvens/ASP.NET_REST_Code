@@ -10,6 +10,7 @@ namespace REST_Code.DTOs.Models
         public string Description { get; set; }
         public string Icon { get; set; }
         public IEnumerable<PostDTO> Posts { get; set; }
+        public int noPosts { get; set; }
         public int Likes { get; set; }
         public bool IsLiking { get; set; }
 
@@ -22,6 +23,7 @@ namespace REST_Code.DTOs.Models
                 Name = board.Name,
                 Description = board.Description,
                 Icon = board.Icon.Url,
+                noPosts = board.Posts.Count,
                 Likes = board.Likes.Count
             };
         }
