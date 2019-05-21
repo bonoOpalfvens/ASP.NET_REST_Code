@@ -18,7 +18,10 @@ namespace REST_Code.Data.Repository
         }
 
         private IQueryable<User> Users => _users
-            .Include(p => p.Avatar);
+            .Include(p => p.Avatar)
+            .Include(p => p.CreatedPosts)
+            .Include(p => p.LikedPosts)
+            .Include(p => p.CreatedComments);
         #endregion
 
         public void Add(User user)
@@ -29,6 +32,11 @@ namespace REST_Code.Data.Repository
         public User GetBy(string username)
         {
             return Users.Include(u => u.CreatedPosts).Include(u => u.Boards).Include(u => u.LikedPosts).SingleOrDefault(u => u.Username.Equals(username));
+        }
+
+        public User GetByEmail(string email)
+        {
+            return Users.Include(u => u.CreatedPosts).Include(u => u.Boards).Include(u => u.LikedPosts).SingleOrDefault(u => u.Email.Equals(email));
         }
 
         public void SaveChanges()

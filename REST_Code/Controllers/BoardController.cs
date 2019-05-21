@@ -25,13 +25,13 @@ namespace REST_Code.Controllers
 
         // GET : api/board/top
         /// <summary>
-        /// Get top 10 boards
+        /// Get top 5 boards
         /// </summary>
-        /// <returns>the top 10 boards</returns>
+        /// <returns>the top 5 boards</returns>
         [HttpGet("top")]
         public IEnumerable<BoardDTO> GetTopBoards()
         {
-            return _boardRepository.GetAll().OrderBy(b => b.Posts.Count).Take(10).Select(BoardDTO.FromBoard);
+            return _boardRepository.GetAll().OrderBy(b => b.Posts.Count).Take(5).Select(BoardDTO.FromBoard);
         }
 
         // GET : api/board

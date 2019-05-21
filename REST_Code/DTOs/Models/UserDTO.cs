@@ -15,10 +15,12 @@ namespace REST_Code.DTOs.Models
         public string LastName { get; set; }
         public string Description { get; set; }
         public string Github { get; set; }
-        public ICollection<string> AvailableAvatars { get; set; }
-        public ICollection<BoardDTO> Boards { get; set; }
-        public ICollection<PostDTO> LikedPosts { get; set; }
-        public ICollection<PostDTO> CreatedPosts { get; set; }
+        public int NoLikedPosts { get; set; }
+        public int NoCreatedPosts { get; set; }
+        public int NoCreatedComments { get; set; }
+        public IEnumerable<BoardDTO> Boards { get; set; }
+        public IEnumerable<PostDTO> LikedPosts { get; set; }
+        public IEnumerable<PostDTO> CreatedPosts { get; set; }
 
         public static UserDTO FromUser(User user)
         {
@@ -32,7 +34,10 @@ namespace REST_Code.DTOs.Models
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Description = user.Description,
-                Github = user.Github
+                Github = user.Github,
+                NoLikedPosts = user.LikedPosts.Count,
+                NoCreatedPosts = user.CreatedPosts.Count,
+                NoCreatedComments = user.CreatedComments.Count
             };
         }
     }

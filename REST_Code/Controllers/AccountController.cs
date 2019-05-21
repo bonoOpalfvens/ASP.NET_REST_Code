@@ -11,6 +11,7 @@ using REST_Code.Models.IRepository;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -76,7 +77,7 @@ namespace REST_Code.Controllers
         {
             // Basic registration of required credentials
             IdentityUser idUser = new IdentityUser { UserName = model.UserName, Email = model.Email };
-            User user = new User { Email = model.Email, Username = model.UserName, Avatar =  _iconRepository.GetBy(14)};
+            User user = new User { Email = model.Email, Username = model.UserName, Avatar =  _iconRepository.GetBy(16)};
             var result = await _userManager.CreateAsync(idUser, model.Password);
 
             if (result.Succeeded)
@@ -103,13 +104,40 @@ namespace REST_Code.Controllers
             if (user == null)
                 return NotFound();
 
+            UserDTO tempUser = UserDTO.FromUser(user);
             if (!(User != null && User.Identity.IsAuthenticated && User.Identity.Name.Equals(user.Username)))
             {
                 if (user.EmailIsPrivate)
-                    user.Email = "privacy@fluxcode.be";
+                    tempUser.Email = "privacy@fluxcode.be";
                 // Private attributes only readable for logged in users
+                tempUser.CreatedPosts = user.CreatedPosts.Select(PostDTO.FromPost); ;
             }
-            return UserDTO.FromUser(user);
+            return tempUser;
+        }
+
+        // GET : api/account/byEmail/email
+        /// <summary>
+        /// Get the user with the given email
+        /// </summary>
+        /// <param name="email">the email of the user</param>
+        /// <returns>the user</returns>
+        [AllowAnonymous]
+        [HttpGet("byEmail/{email}")]
+        public ActionResult<UserDTO> GetUserByEmail(String email)
+        {
+            User user = _userRepository.GetByEmail(email);
+            if (user == null)
+                return NotFound();
+
+            UserDTO tempUser = UserDTO.FromUser(user);
+            if (!(User != null && User.Identity.IsAuthenticated && User.Identity.Name.Equals(user.Username)))
+            {
+                if (user.EmailIsPrivate)
+                    tempUser.Email = "privacy@fluxcode.be";
+                // Private attributes only readable for logged in users
+                tempUser.CreatedPosts = user.CreatedPosts.Select(PostDTO.FromPost); ;
+            }
+            return tempUser;
         }
 
         // GET : api/account/checkusername

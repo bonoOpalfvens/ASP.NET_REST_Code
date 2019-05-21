@@ -39,7 +39,6 @@ namespace REST_Code.Data
                 _icons.Add(new Icon { Url = "https://imgur.com/jSRe2wW.png" });
                 _icons.Add(new Icon { Url = "https://imgur.com/PEdNf6X.png" });
                 _icons.Add(new Icon { Url = "https://imgur.com/Seed15K.png" });
-                _icons.Add(new Icon { Url = "https://imgur.com/Seed15K.png" });
                 _icons.Add(new Icon { Url = "https://imgur.com/luL9jdc.png" });
                 _icons.Add(new Icon { Url = "https://imgur.com/ojavEjW.png" });
                 _icons.Add(new Icon { Url = "https://imgur.com/YajwjJS.png" });
@@ -73,6 +72,8 @@ namespace REST_Code.Data
                 _boards.Add(new Board { Name = "Kotlin", Icon = (Icon)_icons[5], Description = description });
 
                 User user = new User { Username = "Bono", Email = "Bono@fluxcode.be", Avatar = (Icon)_icons[2] };
+                IdentityUser idUser = new IdentityUser { UserName = user.Username, Email = user.Email };
+                await _userManager.CreateAsync(idUser, "P@ssword1111");
                 _dbContext.AppUsers.Add(user);
 
                 ArrayList _posts = new ArrayList();
