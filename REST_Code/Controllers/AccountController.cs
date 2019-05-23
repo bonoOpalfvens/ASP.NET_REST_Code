@@ -10,7 +10,6 @@ using REST_Code.Models;
 using REST_Code.Models.IRepository;
 using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -110,8 +109,9 @@ namespace REST_Code.Controllers
                 if (user.EmailIsPrivate)
                     tempUser.Email = "privacy@fluxcode.be";
                 // Private attributes only readable for logged in users
-                tempUser.CreatedPosts = user.CreatedPosts.Select(PostDTO.FromPost); ;
             }
+            tempUser.CreatedPosts = user.CreatedPosts.Select(PostDTO.FromPost);
+            tempUser.Boards = user.Boards.Select(b => BoardDTO.FromBoard(b.Board));
             return tempUser;
         }
 
@@ -135,8 +135,9 @@ namespace REST_Code.Controllers
                 if (user.EmailIsPrivate)
                     tempUser.Email = "privacy@fluxcode.be";
                 // Private attributes only readable for logged in users
-                tempUser.CreatedPosts = user.CreatedPosts.Select(PostDTO.FromPost); ;
             }
+            tempUser.CreatedPosts = user.CreatedPosts.Select(PostDTO.FromPost);
+            tempUser.Boards = user.Boards.Select(b => BoardDTO.FromBoard(b.Board));
             return tempUser;
         }
 

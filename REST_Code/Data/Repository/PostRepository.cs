@@ -21,8 +21,8 @@ namespace REST_Code.Data.Repository
             .Include(p => p.Board).ThenInclude(b => b.Icon)
             .Include(p => p.User).ThenInclude(p => p.Avatar)
             .Include(p => p.Comments).ThenInclude(c => c.User).ThenInclude(u => u.Avatar)
-            .Include(p => p.Comments).ThenInclude(c => c.Likes)
-            .Include(p => p.Likes);
+            .Include(p => p.Comments).ThenInclude(c => c.Likes).ThenInclude(u => u.User)
+            .Include(p => p.Likes).ThenInclude(u => u.User);
 
 
         public void Add(Post post)

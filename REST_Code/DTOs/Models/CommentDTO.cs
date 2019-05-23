@@ -1,5 +1,6 @@
 ﻿using REST_Code.Models;
 using System;
+using System.Linq;
 
 namespace REST_Code.DTOs.Models
 {
@@ -22,6 +23,19 @@ namespace REST_Code.DTOs.Models
                 DateAdded = comment.DateAdded,
                 Content = comment.Content,
                 Likes = comment.Likes.Count
+            };
+        }
+
+        public static CommentDTO FromComment(Comment comment, string username)
+        {
+            return new CommentDTO
+            {
+                Id = comment.Id,
+                User = UserDTO.FromUser(comment.User),
+                DateAdded = comment.DateAdded,
+                Content = comment.Content,
+                Likes = comment.Likes.Count,
+                IsLiking = comment.Likes.Any(c => c.User.Username.Equals(username))
             };
         }
     }

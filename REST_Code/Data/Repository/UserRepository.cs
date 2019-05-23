@@ -21,6 +21,9 @@ namespace REST_Code.Data.Repository
             .Include(p => p.Avatar)
             .Include(p => p.CreatedPosts)
             .Include(p => p.LikedPosts)
+            .Include(p => p.Boards).ThenInclude(p => p.Board).ThenInclude(p => p.Icon)
+            .Include(p => p.Boards).ThenInclude(p => p.Board).ThenInclude(p => p.Likes)
+            .Include(p => p.Boards).ThenInclude(p => p.Board).ThenInclude(p => p.Posts)
             .Include(p => p.CreatedComments);
         #endregion
 

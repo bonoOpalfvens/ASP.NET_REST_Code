@@ -1,30 +1,41 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using REST_Code.DTOs;
-using REST_Code.DTOs.Models;
-using REST_Code.Models;
-using REST_Code.Models.IRepository;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace REST_Code.Controllers
+﻿namespace REST_Code.Controllers
 {
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using REST_Code.DTOs.Models;
+    using REST_Code.Models;
+    using REST_Code.Models.DataBindings;
+    using REST_Code.Models.IRepository;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    /// <summary>
+    /// Defines the <see cref="PostController" />
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     [Produces("application/json")]
     [ApiConventionType(typeof(DefaultApiConventions))]
     public class PostController : Controller
     {
-        #region Init
+        /// <summary>
+        /// Defines the _postRepository
+        /// </summary>
         private readonly IPostRepository _postRepository;
+        private readonly IUserRepository _userRepository;
 
-        public PostController(IPostRepository context)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PostController"/> class.
+        /// </summary>
+        /// <param name="context">The context<see cref="IPostRepository"/></param>
+        public PostController(IPostRepository context, IUserRepository userRepository)
         {
             _postRepository = context;
+            _userRepository = userRepository;
         }
-        #endregion
 
-        // GET : api/post
         /// <summary>
         /// Get all the posts
         /// </summary>
@@ -37,12 +48,17 @@ namespace REST_Code.Controllers
             {
                 PostDTO temp = PostDTO.FromPost(post);
                 temp.Board = new BoardDTO { Id = post.Board.Id, Description = post.Board.Description, Name = post.Board.Name, Icon = post.Board.Icon.Url, Likes = post.Likes.Count };
+
+                if (User.Identity.IsAuthenticated && post.Likes.Any(l => l.User.Username.Equals(User.Identity.Name)))
+                {
+                    temp.IsLiking = true;
+                }
                 postDTOs.Add(temp);
             }
             return postDTOs;
         }
 
-        // GET : api/post/id
+
         /// <summary>
         /// Get the post with the given id
         /// </summary>
@@ -56,8 +72,73 @@ namespace REST_Code.Controllers
                 return NotFound();
             PostDTO temp = PostDTO.FromPost(post);
             temp.Board = new BoardDTO { Id = post.Board.Id, Description = post.Board.Description, Name = post.Board.Name, Icon = post.Board.Icon.Url, Likes = post.Likes.Count };
-            temp.Comments = post.Comments.Select(CommentDTO.FromComment);
+
+            if (User.Identity.IsAuthenticated)
+            {
+                if(post.Likes.Any(l => l.User.Username.Equals(User.Identity.Name)))
+                    temp.IsLiking = true;
+
+                temp.Comments = post.Comments.Select(c => CommentDTO.FromComment(c, User.Identity.Name));
+            }
+            else
+            {
+                temp.Comments = post.Comments.Select(CommentDTO.FromComment);
+            }
             return temp;
+        }
+
+        // POST : api/post/postid/comment/commentid/like
+        /// <summary>
+        /// Like a post
+        /// </summary>
+        /// <param name="postId">the Id of the post</param>
+        /// <param name="commentId">the Id of the post</param>
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPost("{postId}/comment/{commentId}/like")]
+        public ActionResult<Boolean> LikeComment(long postId, long commentId)
+        {
+            Post post = _postRepository.GetBy(postId);
+            if (post == null)
+                return NotFound();
+            Comment comment = post.Comments.FirstOrDefault(c => c.Id == commentId);
+            if (comment == null)
+                return NotFound();
+
+            if (User.Identity.IsAuthenticated && comment.Likes.Any(l => l.User.Username.Equals(User.Identity.Name)))
+            {
+                comment.Likes.Remove(comment.Likes.First(l => l.User.Username.Equals(User.Identity.Name)));
+            }
+            else
+            {
+                comment.Likes.Add(new CommentLikes { Comment = comment, User = _userRepository.GetBy(User.Identity.Name), DateLiked = DateTime.Now });
+            }
+            _postRepository.SaveChanges();
+            return true;
+        }
+
+        // POST : api/post/id/like
+        /// <summary>
+        /// Like a post
+        /// </summary>
+        /// <param name="id">the Id of the post</param>
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPost("{id}/like")]
+        public ActionResult<Boolean> Like(long id)
+        {
+            Post post = _postRepository.GetBy(id);
+            if (post == null)
+                return NotFound();
+
+            if (User.Identity.IsAuthenticated && post.Likes.Any(l => l.User.Username.Equals(User.Identity.Name)))
+            {
+                post.Likes.Remove(post.Likes.First(l => l.User.Username.Equals(User.Identity.Name)));
+            }
+            else
+            {
+                post.Likes.Add(new PostLikes { Post = post, User = _userRepository.GetBy(User.Identity.Name), DateLiked = DateTime.Now });
+            }
+            _postRepository.SaveChanges();
+            return true;
         }
     }
 }
