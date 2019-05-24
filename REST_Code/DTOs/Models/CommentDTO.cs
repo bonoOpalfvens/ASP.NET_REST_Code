@@ -1,5 +1,4 @@
-﻿using REST_Code.Models;
-using System;
+﻿using System;
 using System.Linq;
 
 namespace REST_Code.DTOs.Models
@@ -14,7 +13,7 @@ namespace REST_Code.DTOs.Models
         public int Likes { get; set; }
         public bool IsLiking { get; set; }
 
-        public static CommentDTO FromComment(Comment comment)
+        public static CommentDTO FromComment(REST_Code.Models.Comment comment)
         {
             return new CommentDTO
             {
@@ -26,7 +25,7 @@ namespace REST_Code.DTOs.Models
             };
         }
 
-        public static CommentDTO FromComment(Comment comment, string username)
+        public static CommentDTO FromComment(REST_Code.Models.Comment comment, string username)
         {
             return new CommentDTO
             {

@@ -1,7 +1,5 @@
-﻿using REST_Code.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace REST_Code.DTOs.Models
 {
@@ -18,7 +16,7 @@ namespace REST_Code.DTOs.Models
         public int Likes { get; set; }
         public bool IsLiking { get; set; }
 
-        public static PostDTO FromPost(Post post)
+        public static PostDTO FromPost(REST_Code.Models.Post post)
         {
             return new PostDTO
             {

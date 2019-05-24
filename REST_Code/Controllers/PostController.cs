@@ -4,6 +4,7 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using REST_Code.DTOs.Models;
+    using REST_Code.DTOs.Post;
     using REST_Code.Models;
     using REST_Code.Models.DataBindings;
     using REST_Code.Models.IRepository;
@@ -25,15 +26,17 @@
         /// </summary>
         private readonly IPostRepository _postRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IBoardRepository _boardRepository;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PostController"/> class.
         /// </summary>
         /// <param name="context">The context<see cref="IPostRepository"/></param>
-        public PostController(IPostRepository context, IUserRepository userRepository)
+        public PostController(IPostRepository context, IUserRepository userRepository, IBoardRepository boardRepository)
         {
             _postRepository = context;
             _userRepository = userRepository;
+            _boardRepository = boardRepository;
         }
 
         /// <summary>
@@ -75,10 +78,10 @@
 
             if (User.Identity.IsAuthenticated)
             {
-                if(post.Likes.Any(l => l.User.Username.Equals(User.Identity.Name)))
+                if (post.Likes.Any(l => l.User.Username.Equals(User.Identity.Name)))
                     temp.IsLiking = true;
 
-                temp.Comments = post.Comments.Select(c => CommentDTO.FromComment(c, User.Identity.Name));
+                temp.Comments = post.Comments.OrderByDescending(c => c.DateAdded).Select(c => CommentDTO.FromComment(c, User.Identity.Name));
             }
             else
             {
@@ -139,6 +142,47 @@
             }
             _postRepository.SaveChanges();
             return true;
+        }
+
+        // POST : api/post
+        /// <summary>
+        /// Create a post
+        /// </summary>
+        /// <param name="post">the content of the post</param>
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPost]
+        public ActionResult<Boolean> CreatePost(CreateDTO post)
+        {
+            Board board = _boardRepository.GetBy(post.BoardId);
+
+            if (board != null)
+            {
+                Post tempPost = new Post { Board = board, Title = post.Title, Content = post.Content, DateAdded = DateTime.Now, User = _userRepository.GetBy(User.Identity.Name) };
+                _postRepository.Add(tempPost);
+                _postRepository.SaveChanges();
+                return Created("", tempPost.Id);
+            }
+            return NotFound();
+        }
+
+        // POST : api/post/Comment
+        /// <summary>
+        /// Create a comment
+        /// </summary>
+        /// <param name="comment">the content of the comment</param>
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPost("Comment")]
+        public ActionResult<Boolean> CreateComment(DTOs.Comment.CreateDTO comment)
+        {
+            Post post = _postRepository.GetBy(comment.PostId);
+
+            if (post != null)
+            {
+                post.Comments.Add(new Comment { Post = post, Content = comment.Content, DateAdded = DateTime.Now, User = _userRepository.GetBy(User.Identity.Name) });
+                _postRepository.SaveChanges();
+                return Created("", post.Id);
+            }
+            return NotFound();
         }
     }
 }

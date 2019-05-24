@@ -16,7 +16,7 @@ namespace REST_Code.Models
         [Required]
         public DateTime DateAdded { get; set; }
         [Required]
-        [MaxLength(250)]
+        [MinLength(2), MaxLength(250)]
         public string Content { get; set; }
         public ICollection<CommentLikes> Likes { get; set; }
         #endregion

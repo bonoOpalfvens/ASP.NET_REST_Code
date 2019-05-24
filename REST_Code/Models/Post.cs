@@ -12,10 +12,10 @@ namespace REST_Code.Models
         [Key]
         public long Id { get; set; }
         [Required]
-        [MaxLength(50)]
+        [MinLength(3), MaxLength(50)]
         public String Title { get; set; }
         [Required]
-        [MaxLength(10000)]
+        [MinLength(30), MaxLength(10000)]
         public String Content { get; set; }
         [Required]
         public Board Board { get; set; }
